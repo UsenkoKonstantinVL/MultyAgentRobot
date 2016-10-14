@@ -13,28 +13,62 @@ namespace MultyAgentRobots.MainClasses
         public static int mapHeight = 500;
         public static int mapWidth = 500;
 
-        public static int Cell = 5;
+        public static int Cell = 10;
         #endregion
         Bitmap image;
 
         public MapEditManager()
         {
             image = new Bitmap(mapWidth, mapHeight);
+            var g = Graphics.FromImage(image);
+            var brush = new SolidBrush(Color.White);
+            g.FillRectangle(brush, 0, 0, mapWidth, mapHeight);
         }
 
         public Bitmap InitizlizeMap()
         {
-            return DrawGrid();
+            return DrawGrid(1);
+        }
+
+        public Bitmap SetStretch(int str)
+        {
+            return DrawGrid(str);
         }
 
 
         public Bitmap DrawCell(int x, int y, Occyped occyped, int stracheCell)
         {
+            Graphics g;
 
-            return DrawGrid();
+
+
+            g = Graphics.FromImage(image);
+
+            int cx = x / (stracheCell* Cell);
+            int cy = y / (stracheCell * Cell);
+
+            int x1 = cx * (stracheCell * Cell);
+            int x2 = (cx + 1) * (stracheCell * Cell);
+
+            int y1 = cy * (stracheCell * Cell);
+            int y2 = (cy + 1) * (stracheCell * Cell);
+
+            SolidBrush blueBrush;  new SolidBrush(Color.Blue);
+            if(occyped == Occyped.NoOccyped)
+            {
+                blueBrush = new SolidBrush(Color.Black);
+            }
+            else
+            {
+                blueBrush = new SolidBrush(Color.White);
+            }
+
+            g.FillRectangle(blueBrush, x1, y1, (stracheCell * Cell), (stracheCell * Cell));
+
+            return DrawGrid(stracheCell);
         }
 
-        private Bitmap DrawGrid()
+        private Bitmap DrawGrid(int s)
         {
             Bitmap _image = (Bitmap)image.Clone();
 
@@ -46,9 +80,9 @@ namespace MultyAgentRobots.MainClasses
 
             myPen.Width = 1;
 
-            int h = mapHeight / Cell;
+            int h = mapHeight / (s * Cell);
 
-            for (int i = 1; i < (h - 1); i++)
+            for (int i = 1; i <= (h ); i++)
             {
                 int x1, y1;
                 int x2, y2;
@@ -57,19 +91,19 @@ namespace MultyAgentRobots.MainClasses
                 y1 = 0;
                 y2 = mapHeight - 1;
 
-                x1 = (i * Cell) - 1;
+                x1 = (i * Cell*s) - 1;
                 x2 = x1;
 
                 g.DrawLine(myPen, x1, y1, x2, y2);
             }
 
-            for (int i = 1; i < (h - 1); i++)
+            for (int i = 1; i <= (h); i++)
             {
                 int x1, y1;
                 int x2, y2;
 
 
-                y1 = (i * Cell) - 1;
+                y1 = (i * Cell*s) - 1;
                 y2 = y1;
 
                 x1 = 0;
@@ -79,6 +113,17 @@ namespace MultyAgentRobots.MainClasses
             }
 
             return _image;
+        }
+
+        public void SaveImage(String wayName)
+        {
+            image.Save(wayName);
+        }
+
+        public void LoadImage(String loadName)
+        {
+            image = new Bitmap(loadName);
+           
         }
     }
 

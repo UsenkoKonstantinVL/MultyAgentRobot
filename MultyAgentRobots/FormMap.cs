@@ -21,22 +21,29 @@ namespace MultyAgentRobots
             radioButton1.Checked = true;
             oc = Occyped.NoOccyped;
             manager = new MapEditManager();
+            pictureBox2.Image = manager.InitizlizeMap();
 
         }
         int strech = 1;
         private void Button1_Click(object sender, EventArgs e)
         {
             strech++;
-            if (strech > 3)
-                strech = 3;
+            /*if (strech == 3)
+                strech = 4;*/
+            if (strech > 4)
+                strech = 4;
+            pictureBox2.Image = manager.SetStretch(strech);
             drawstrech();
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
             strech--;
+           /* if (strech == 3)
+                strech = 2;*/
             if (strech < 1)
                 strech = 1;
+            pictureBox2.Image = manager.SetStretch(strech);
             drawstrech();
         }
 
@@ -68,6 +75,52 @@ namespace MultyAgentRobots
         private void pictureBox1_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void pictureBox2_Click(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void pictureBox2_MouseClick(object sender, MouseEventArgs e)
+        {
+            pictureBox2.Image = manager.DrawCell(e.X, e.Y, oc, strech);
+        }
+
+        private void radioButton1_CheckedChanged_1(object sender, EventArgs e)
+        {
+            if (radioButton1.Checked == true)
+            {
+                oc = Occyped.NoOccyped;
+            }
+        }
+
+        private void radioButton2_CheckedChanged_1(object sender, EventArgs e)
+        {
+            if (radioButton2.Checked == true)
+            {
+                oc = Occyped.Occyped;
+            }
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog s = new SaveFileDialog();
+
+            if(s.ShowDialog() == DialogResult.OK )
+            {
+                manager.SaveImage(s.FileName);
+            }
+        }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog f = new OpenFileDialog();
+            if (f.ShowDialog() == DialogResult.OK)
+            {
+                manager.LoadImage(f.FileName);
+                pictureBox2.Image = manager.InitizlizeMap();
+            }
         }
     }
 }
