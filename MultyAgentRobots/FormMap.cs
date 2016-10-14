@@ -15,6 +15,7 @@ namespace MultyAgentRobots
         public FormMap()
         {
             InitializeComponent();
+            Form1 f;
         }
     }
 }
