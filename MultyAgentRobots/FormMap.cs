@@ -31,7 +31,7 @@ namespace MultyAgentRobots
                 strech = 3;
             drawstrech();
         }
-        
+
         private void button2_Click(object sender, EventArgs e)
         {
             strech--;
@@ -44,10 +44,11 @@ namespace MultyAgentRobots
         {
 
         }
-        private void drawstrech() {
+        private void drawstrech()
+        {
             label1.Text = "размер: " + strech.ToString();
         }
-        
+
         private void radioButton1_CheckedChanged(object sender, EventArgs e)
         {
             if (radioButton1.Checked == true)
@@ -58,7 +59,7 @@ namespace MultyAgentRobots
         Occyped oc;
         private void radioButton2_CheckedChanged(object sender, EventArgs e)
         {
-            if(radioButton2.Checked == true)
+            if (radioButton2.Checked == true)
             {
                 oc = Occyped.Occyped;
             }

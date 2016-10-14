@@ -22,6 +22,11 @@ namespace MultyAgentRobots.MainClasses
             image = new Bitmap(mapWidth, mapHeight);
         }
 
+        public Bitmap InitizlizeMap()
+        {
+            return DrawGrid();
+        }
+
 
         public Bitmap DrawCell(int x, int y, Occyped occyped, int stracheCell)
         {
