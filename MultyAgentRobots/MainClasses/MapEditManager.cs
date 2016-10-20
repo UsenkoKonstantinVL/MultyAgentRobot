@@ -15,6 +15,7 @@ namespace MultyAgentRobots.MainClasses
 
         public static int Cell = 10;
         #endregion
+
         Bitmap image;
 
         public MapEditManager()
