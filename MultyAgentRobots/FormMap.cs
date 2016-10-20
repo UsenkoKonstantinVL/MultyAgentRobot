@@ -122,5 +122,15 @@ namespace MultyAgentRobots
                 pictureBox2.Image = manager.InitizlizeMap();
             }
         }
+
+        private void panel2_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void FormMap_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }
