@@ -65,6 +65,7 @@
       <DependentUpon>Formtest.cs</DependentUpon>
     </Compile>
     <Compile Include="MainClasses\MapEditManager.cs" />
+    <Compile Include="MainClasses\MapManager.cs" />
     <Compile Include="MainClasses\RobotController.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
