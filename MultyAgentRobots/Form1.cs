@@ -13,13 +13,13 @@ namespace MultyAgentRobots
     public partial class Form1 : Form
     {
         FormMap formmap;
-        Tester tester;
+        Formtest tester;
         public Form1()
         {
             InitializeComponent();
         
             formmap = new MultyAgentRobots.FormMap();
-            tester = new MultyAgentRobots.Tester();
+            tester = new MultyAgentRobots.Formtest();
         }
         
 
@@ -31,6 +31,7 @@ namespace MultyAgentRobots
         private void button2_Click(object sender, EventArgs e)
         {
             tester.ShowDialog();
+
         }
     }
 }
