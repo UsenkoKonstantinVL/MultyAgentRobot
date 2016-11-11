@@ -4,6 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Drawing;
 using System.Threading.Tasks;
+using System.IO;
+using System.Collections;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Runtime.Serialization;
 
 namespace MultyAgentRobots.MainClasses
 {
@@ -14,6 +18,8 @@ namespace MultyAgentRobots.MainClasses
         public static int mapWidth = 500;
 
         public static int Cell = 10;
+
+        int strCell = 1;
         #endregion
 
         Bitmap image;
@@ -28,11 +34,16 @@ namespace MultyAgentRobots.MainClasses
 
         public Bitmap InitizlizeMap()
         {
-            return DrawGrid(1);
+
+            return DrawGrid(strCell);
         }
 
         public Bitmap SetStretch(int str)
         {
+            var g = Graphics.FromImage(image);
+            var brush = new SolidBrush(Color.White);
+            g.FillRectangle(brush, 0, 0, mapWidth, mapHeight);
+            strCell = str;
             return DrawGrid(str);
         }
 
@@ -41,7 +52,7 @@ namespace MultyAgentRobots.MainClasses
         {
             Graphics g;
 
-
+            strCell = stracheCell;
 
             g = Graphics.FromImage(image);
 
@@ -54,7 +65,7 @@ namespace MultyAgentRobots.MainClasses
             int y1 = cy * (stracheCell * Cell);
             int y2 = (cy + 1) * (stracheCell * Cell);
 
-            SolidBrush blueBrush;  new SolidBrush(Color.Blue);
+            SolidBrush blueBrush =  new SolidBrush(Color.Blue);
             if(occyped == Occyped.NoOccyped)
             {
                 blueBrush = new SolidBrush(Color.Black);
@@ -116,16 +127,78 @@ namespace MultyAgentRobots.MainClasses
             return _image;
         }
 
-        public void SaveImage(String wayName)
+        static public Color GetColorOfPoint(Bitmap b, int x, int y, int str)
         {
-            image.Save(wayName);
+           return b.GetPixel(x * str * Cell, y * str * Cell);
         }
 
-        public void LoadImage(String loadName)
+        static public Bitmap DrawRectanglePointToMap(Bitmap b, int x, int y, int str,  Color color)
         {
-            image = new Bitmap(loadName);
-           
+            Graphics g = Graphics.FromImage(b);
+
+            g.FillRectangle(new SolidBrush(color), x * str * Cell, y * str * Cell, str * Cell, str * Cell);
+
+            return b;
         }
+
+        public void SaveImage(String wayName)
+        {
+            //image.Save(wayName);
+
+            SaveData sv = new SaveData();
+
+            sv.Image = image;
+            sv.Strechcell = strCell;
+
+            MemoryStream memorystream = new MemoryStream();
+            BinaryFormatter bf = new BinaryFormatter();
+            using (FileStream fs = new FileStream(wayName, FileMode.OpenOrCreate))
+            {
+                bf.Serialize(fs, sv);
+
+                //Console.WriteLine("Объект сериализован");
+            }
+
+            //byte[] yourBytesToDb = memorystream.ToArray();
+        }
+
+        public int LoadImage(String loadName)
+        {
+            //image = new Bitmap(loadName);
+            BinaryFormatter formatter = new BinaryFormatter();
+
+            using (FileStream fs = new FileStream(loadName, FileMode.Open, FileAccess.Read))
+            {
+                SaveData newPerson = (SaveData)formatter.Deserialize(fs);
+
+                image = newPerson.Image;
+                strCell = newPerson.Strechcell;
+            }
+            return strCell;
+        }
+
+        public static SaveData LoadSaveData(String loadName)
+        {
+            BinaryFormatter formatter = new BinaryFormatter();
+
+            SaveData newPerson = new MainClasses.SaveData();
+
+            using (FileStream fs = new FileStream(loadName, FileMode.Open, FileAccess.Read))
+            {
+                newPerson = (SaveData)formatter.Deserialize(fs);
+
+       
+            }
+
+            return newPerson;
+        }
+    }
+    [Serializable]
+    public class SaveData
+    {
+        public Bitmap Image { get; set; }
+        public int Strechcell{ get; set; }
+
     }
 
 

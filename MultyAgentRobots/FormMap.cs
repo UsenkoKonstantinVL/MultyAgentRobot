@@ -118,7 +118,8 @@ namespace MultyAgentRobots
             OpenFileDialog f = new OpenFileDialog();
             if (f.ShowDialog() == DialogResult.OK)
             {
-                manager.LoadImage(f.FileName);
+               strech =  manager.LoadImage(f.FileName);
+                drawstrech();
                 pictureBox2.Image = manager.InitizlizeMap();
             }
         }
