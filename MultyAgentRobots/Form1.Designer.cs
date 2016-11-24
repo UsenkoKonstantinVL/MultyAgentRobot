@@ -61,7 +61,7 @@
             this.label1.Size = new System.Drawing.Size(170, 78);
             this.label1.TabIndex = 2;
             this.label1.Text = "Сделано: Усенко Константином\r\nМолчановым Александром\r\nРусаком Дмитрием\r\nМИРЭА 201" +
-    "6\r\nНБА ТИМ!!!\r\nvers.: 1.7\r\n";
+    "6\r\nНБА ТИМ!!!\r\nvers.: 1.7.1\r\n";
             // 
             // Form1
             // 

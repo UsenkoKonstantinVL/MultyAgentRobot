@@ -47,6 +47,10 @@ namespace MultyAgentRobots
             // Очистим список кривых на тот случай, если до этого сигналы уже были нарисованы
             pane.CurveList.Clear();
 
+            pane.Title.Text = "Время работы роботов";
+            pane.XAxis.Title.Text = "Работ";
+            pane.YAxis.Title.Text = "Время(тик)";
+
             int itemscount = 5;
 
             double[] list = new double[ListTime.Count];
@@ -80,6 +84,10 @@ namespace MultyAgentRobots
 
             // Очистим список кривых на тот случай, если до этого сигналы уже были нарисованы
             pane.CurveList.Clear();
+
+            pane.Title.Text = "Время работы роботов в %";
+            pane.XAxis.Title.Text = "Работ";
+            pane.YAxis.Title.Text = "Время(% от общего кол-ва тиков)";
 
             int itemscount = 5;
 
