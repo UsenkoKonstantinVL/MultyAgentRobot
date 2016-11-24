@@ -59,9 +59,16 @@ namespace MultyAgentRobots
                 //create a graph object 
                 Microsoft.Msagl.Drawing.Graph graph = new Microsoft.Msagl.Drawing.Graph("graph");
 
+                int i = 0;
+
                 foreach (MyGraph.Graph gr in GraphTree)
                 {
-                   
+
+
+                    if (gr == null)
+                        Console.WriteLine("Warning");
+                    else
+                        Console.WriteLine(i++);
 
                     String GraphName = "";
 
@@ -74,22 +81,28 @@ namespace MultyAgentRobots
 
                     GraphName += gr.Condition.ToString();
 
-                    foreach (MyGraph.Graph SubGraph in gr.Graphs)
+                    if (gr.Graphs != null)
                     {
-                        
-
-                        String SubGraphName = "";
-
-                        foreach (MyGraph.Point2D point in SubGraph.LinkPoints)
+                        foreach (MyGraph.Graph SubGraph in gr.Graphs)
                         {
-                            SubGraphName += point.X + ":" + point.Y + Environment.NewLine;
+
+                            if (SubGraph == null)
+                            {
+                                Console.WriteLine("Warning");
+                            }
+                            String SubGraphName = "";
+
+                            foreach (MyGraph.Point2D point in SubGraph.LinkPoints)
+                            {
+                                SubGraphName += point.X + ":" + point.Y + Environment.NewLine;
 
 
+                            }
+
+                            SubGraphName += SubGraph.Condition.ToString();
+
+                            graph.AddEdge(GraphName, SubGraphName);
                         }
-
-                        SubGraphName += SubGraph.Condition.ToString();
-
-                        graph.AddEdge(GraphName, SubGraphName);
                     }
                     
                 }

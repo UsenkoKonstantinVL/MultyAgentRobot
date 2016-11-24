@@ -23,6 +23,7 @@ namespace MultyAgentRobots.MainClasses
         string name;
         public Condition condition = Condition.Waiting;
         public GraphManager manager;
+        public double TimeCount { get; set; }
 
         public RobotController()
         {
@@ -34,6 +35,7 @@ namespace MultyAgentRobots.MainClasses
             initializePosition = _pos;
             currentPosition = initializePosition;
             manager = _manager;
+            TimeCount = 0;
         }
 
         public void Initialize()
@@ -99,11 +101,13 @@ namespace MultyAgentRobots.MainClasses
                             massOfPoints = null;
                             currentGraph = null;
                         }
+                        TimeCount++;
                         break;
                     }
                 case Condition.Research:
                     {
                         FunctionResearch();
+                        TimeCount++;
                         break;
                     }
             }

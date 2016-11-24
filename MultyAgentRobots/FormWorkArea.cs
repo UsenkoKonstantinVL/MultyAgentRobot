@@ -16,6 +16,7 @@ namespace MultyAgentRobots
         FormGraph fg;
 
         FormWorkAreaManager manager;
+        
 
 
         public FormWorkArea(List<RobotController> robots, SaveData data)
@@ -27,9 +28,15 @@ namespace MultyAgentRobots
 
         private void button1_Click(object sender, EventArgs e)
         {
+            ChangeStatus();
+        }
+
+        private void ChangeStatus()
+        {
             string n1 = "Старт";
             string n2 = "Стоп";
-            if (button1.Text == n1) { 
+            if (button1.Text == n1)
+            {
                 timer1.Enabled = true;
                 button1.Text = n2;
             }
@@ -43,6 +50,17 @@ namespace MultyAgentRobots
         private void timer1_Tick(object sender, EventArgs e)
         {
             manager.Work();
+
+            if(manager.IsCompleted())
+            {
+                ChangeStatus();
+
+                GraphForm f = new GraphForm();
+                ReturnData data = manager.GetReturnData();
+                f.DrawGraph(data.TotalTick, data.ListTicks);
+                f.ShowDialog();
+               
+            }
         }
 
         private void FormWorkArea_Load(object sender, EventArgs e)
