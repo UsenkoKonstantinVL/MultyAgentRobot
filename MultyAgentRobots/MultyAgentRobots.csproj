@@ -33,6 +33,15 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Msagl">
+      <HintPath>..\..\..\..\Desktop\automatic-graph-layout-master\automatic-graph-layout-master\GraphLayout\Drawing\bin\Debug\Microsoft.Msagl.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Msagl.Drawing">
+      <HintPath>..\..\..\..\Desktop\automatic-graph-layout-master\automatic-graph-layout-master\GraphLayout\Drawing\bin\Debug\Microsoft.Msagl.Drawing.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Msagl.GraphViewerGdi">
+      <HintPath>..\..\..\..\Desktop\automatic-graph-layout-master\automatic-graph-layout-master\GraphLayout\Samples\Editing\bin\Debug\Microsoft.Msagl.GraphViewerGdi.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -52,6 +61,12 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="FormGraph.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormGraph.Designer.cs">
+      <DependentUpon>FormGraph.cs</DependentUpon>
+    </Compile>
     <Compile Include="FormMap.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -70,6 +85,10 @@
     <Compile Include="FormWorkArea.Designer.cs">
       <DependentUpon>FormWorkArea.cs</DependentUpon>
     </Compile>
+    <Compile Include="MainClasses\ControlSystem\Dijkstras\DijkstrasSearch.cs" />
+    <Compile Include="MainClasses\ControlSystem\Graph.cs" />
+    <Compile Include="MainClasses\ControlSystem\Strategiclevel.cs" />
+    <Compile Include="MainClasses\ControlSystem\TacticLevel.cs" />
     <Compile Include="MainClasses\FormTestManager.cs" />
     <Compile Include="MainClasses\FormWorkAreaManager.cs" />
     <Compile Include="MainClasses\MapAreaManager.cs" />
@@ -82,6 +101,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="FormGraph.resx">
+      <DependentUpon>FormGraph.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FormMap.resx">
       <DependentUpon>FormMap.cs</DependentUpon>

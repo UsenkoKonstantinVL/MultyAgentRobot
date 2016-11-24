@@ -13,7 +13,11 @@ namespace MultyAgentRobots
 {
     public partial class FormWorkArea : Form
     {
+        FormGraph fg;
+
         FormWorkAreaManager manager;
+
+
         public FormWorkArea(List<RobotController> robots, SaveData data)
         {
             InitializeComponent();
@@ -44,6 +48,19 @@ namespace MultyAgentRobots
         private void FormWorkArea_Load(object sender, EventArgs e)
         {
             manager.InitialaizeRobotsAndMap();
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            if(fg == null)
+            {
+                fg = new FormGraph();
+                fg.Show();
+                //fg.Close();
+            }
+            //fg = new FormGraph();
+            //fg.Show();
+            fg.PrintGraph(manager.GetGraphNode());
         }
     }
 }

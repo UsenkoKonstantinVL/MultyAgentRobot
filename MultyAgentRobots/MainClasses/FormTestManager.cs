@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
+using System.Windows.Forms;
+using MultyAgentRobots.MainClasses.ControlSystem;
 
 namespace MultyAgentRobots.MainClasses
 {
@@ -82,15 +84,22 @@ namespace MultyAgentRobots.MainClasses
             }
             int i = 0;
             string _name = "Robot_";
+
             List<Color> colors = GetColors();
             List<RobotController> robots = new List<RobotController>();
-            Connector connector = new Connector();
             List<RobotInformation> rInfo = new List<RobotInformation>();
-            try {
+
+
+            Connector connector = new Connector();
+            GraphManager manager = new GraphManager();
+
+            manager.connector = connector;
+                try {
                 int count  = Int32.Parse(numberOfRobots);
                 for(int j = 0; j < count; j++)
                 {
                     RobotController r = new RobotController();
+                    r.manager = manager;
                     RobotInformation info = new RobotInformation();
                     rInfo.Add(info);
                     info.Name = _name + i.ToString();
@@ -102,10 +111,11 @@ namespace MultyAgentRobots.MainClasses
                     //Цвет робота
                     r.robotInformation = info;
                     r.connector = connector;
+                    r.Initialize();
                     robots.Add(r);
                 }
                 connector.infoAboutRobots = rInfo;
-
+                connector.robots = robots;
                 //После всего передаем данные
                 //Создаем окно, передаем данные, открываем окно...
 
@@ -113,9 +123,9 @@ namespace MultyAgentRobots.MainClasses
                 form.ShowDialog();
 
             }
-            catch
+            catch(Exception e)
             {
-                
+                MessageBox.Show(e.Message); 
             }
 
         }
@@ -125,12 +135,12 @@ namespace MultyAgentRobots.MainClasses
             List<Color> colors = new List<Color>();
 
 
-            colors.Add(Color.YellowGreen);
+            colors.Add(Color.HotPink);
             colors.Add(Color.Yellow);
             colors.Add(Color.Green);
             colors.Add(Color.Blue);
             colors.Add(Color.Violet);
-            colors.Add(Color.Wheat);
+            colors.Add(Color.ForestGreen);
             colors.Add(Color.SkyBlue);
             colors.Add(Color.SeaGreen);
             colors.Add(Color.RoyalBlue);

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
+using MultyAgentRobots.MainClasses.ControlSystem.Dijkstras;
 
 namespace MultyAgentRobots.MainClasses
 {
@@ -62,13 +63,14 @@ namespace MultyAgentRobots.MainClasses
         /// <param name="info"></param>
         public Bitmap DrawMap(List<RobotInformation> info)
         {
-            int[] desX = new int[9] { -1,  0,  1, 1, 1, 0, -1, -1, 0 };
-            int[] desY = new int[9] { -1, -1, -1, 0, 1, 1,  1,  0, 0 };
-
+            /*int[] desX = new int[9] { -1,  0,  1, 1, 1, 0, -1, -1, 0 };
+            int[] desY = new int[9] { -1, -1, -1, 0, 1, 1,  1,  0, 0 };*/
+            int[] desX = new int[5] { 0, 1, 0, -1, 0};
+            int[] desY = new int[5] { -1, 0, 1, 0, 0};
 
             foreach (RobotInformation r in info)
             {
-                for(int i = 0; i < 9; i++)
+                for(int i = 0; i < desX.Length; i++)
                 {
                     var pixFogmap = fogMap.GetPixel(r.X * MapEditManager.Cell * str + desX[i]  * MapEditManager.Cell * str + MapEditManager.Cell * str / 2,
                         r.Y * MapEditManager.Cell * str + desY[i] * MapEditManager.Cell * str + MapEditManager.Cell * str / 2);
@@ -96,6 +98,10 @@ namespace MultyAgentRobots.MainClasses
 
                     g.FillEllipse(new SolidBrush(r.RobotColor), r.X * MapEditManager.Cell * str + 1,
                         r.Y * MapEditManager.Cell * str + 1, MapEditManager.Cell * str - 2, 
+                        MapEditManager.Cell * str - 2);
+
+                    g.DrawEllipse(new Pen(Color.Tomato, 2), r.X * MapEditManager.Cell * str + 1,
+                        r.Y * MapEditManager.Cell * str + 1, MapEditManager.Cell * str - 2,
                         MapEditManager.Cell * str - 2);
 
                 }
@@ -170,7 +176,7 @@ namespace MultyAgentRobots.MainClasses
                 scan[2] = POSITION_OCUPED;
             }
 
-            if (position.X - 1 < 0)
+            if (position.X - 1 > 0)
             {
                 var _position = new Position();
                 _position.X = position.X - 1;
@@ -184,6 +190,68 @@ namespace MultyAgentRobots.MainClasses
 
 
             return scan;
+        }
+
+        public Dijkstras GetDijkstras()
+        {
+            Dijkstras graph = new Dijkstras();
+
+            int maxWidth = fogMap.Width / (str * MapEditManager.Cell);
+            int maxHeight = fogMap.Height / (str * MapEditManager.Cell);
+
+
+            for (int i = 0; i < maxWidth; i++)
+            {
+                for(int j = 0; j < maxHeight; j++)
+                {
+                    Position pos = new Position();
+                    pos.X = i;
+                    pos.Y = j;
+                    if(getObstacle(pos) == POSITION_FREE)
+                    {
+                        String posName = pos.GetName();
+                        Dictionary<String, int> dictionary = new Dictionary<String, int> ();
+                        if (pos.Y > 1)
+                        {
+                            Position newPos = new Position(pos.X, pos.Y - 1);
+                            if(getObstacle(newPos) == POSITION_FREE)
+                            {
+                                dictionary.Add(newPos.GetName(), 1);
+                            }
+                        }
+
+                        if (pos.Y < (maxHeight - 1))
+                        {
+                            Position newPos = new Position(pos.X, pos.Y + 1);
+                            if (getObstacle(newPos) == POSITION_FREE)
+                            {
+                                dictionary.Add(newPos.GetName(), 1);
+                            }
+                        }
+
+                        if (pos.X > 1)
+                        {
+                            Position newPos = new Position(pos.X - 1, pos.Y);
+                            if (getObstacle(newPos) == POSITION_FREE)
+                            {
+                                dictionary.Add(newPos.GetName(), 1);
+                            }
+                        }
+
+                        if (pos.X < (maxWidth - 1))
+                        {
+                            Position newPos = new Position(pos.X + 1, pos.Y);
+                            if (getObstacle(newPos) == POSITION_FREE)
+                            {
+                                dictionary.Add(newPos.GetName(), 1);
+                            }
+                        }
+                        graph.add_vertex(posName, dictionary);
+                    } 
+                }
+            }
+
+            return graph;
         }
 
         private int getObstacle(Position pos)
