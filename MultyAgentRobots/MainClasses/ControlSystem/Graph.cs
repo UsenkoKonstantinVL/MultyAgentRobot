@@ -12,11 +12,6 @@ namespace MultyAgentRobots.MainClasses.ControlSystem
     }
     public class Graph
     {
-        /*public int startX;
-        public int startY;
-        public int endX;
-        public int endY;*/
-
         public GraphCondition Condition;
 
         public List<Point2D> LinkPoints;
@@ -30,6 +25,15 @@ namespace MultyAgentRobots.MainClasses.ControlSystem
             LinkPoints = new List<Point2D>();
             Graphs = new List<Graph>();
             Condition = GraphCondition.isNew;
+        }
+
+        public void SetGraph(Graph g)
+        {
+            this.Condition = g.Condition;
+            this.Direction = g.Direction;
+            this.Graphs = g.Graphs;
+            this.LinkPoints = g.LinkPoints;
+            this.RobotName = g.RobotName;
         }
     }
 
@@ -91,6 +95,75 @@ namespace MultyAgentRobots.MainClasses.ControlSystem
 
         public List<Graph> GetGraphs()
         {
+           /* for (int i = 0; i < Graphs.Count; i++)
+            {
+                if (Graphs[i].Condition == GraphCondition.inInProcess)
+                {
+                    bool match = false;
+                    for (int j = 0; j < WorkingGraph.Count; j++)
+                    {
+                        if(WorkingGraph[j].Direction == Graphs[i].Direction &&
+                            WorkingGraph[j].RobotName == Graphs[i].RobotName &&
+                             WorkingGraph[j].LinkPoints[0].X == Graphs[i].LinkPoints[0].X &&
+                              WorkingGraph[j].LinkPoints[0].Y == Graphs[i].LinkPoints[0].Y)
+                        {
+                            match = true;
+                        }
+                    }
+
+                    if(!match)
+                    {
+                        Graphs.RemoveAt(i);
+                        i--;
+                    }
+                }
+
+                if (Graphs[i].Condition == GraphCondition.isNew)
+                {
+
+                    bool match = false;
+                    for (int j = 0; j < NewGraph.Count; j++)
+                    {
+                        if (NewGraph[j].Direction == Graphs[i].Direction &&
+                            NewGraph[j].RobotName == Graphs[i].RobotName &&
+                             NewGraph[j].LinkPoints[0].X == Graphs[i].LinkPoints[0].X &&
+                              NewGraph[j].LinkPoints[0].Y == Graphs[i].LinkPoints[0].Y)
+                        {
+                            match = true;
+                        }
+                    }
+
+                    if (!match)
+                    {
+                        Graphs.RemoveAt(i);
+                        i--;
+                    }
+
+                    
+
+                }
+            }*/
+
+            for(int i = 0; i < Graphs.Count; i++)
+            {
+                if(Graphs[i] != null)
+                {
+                    for(int j = 0; j < Graphs[i].Graphs.Count; j++)
+                    {
+                        if(Graphs[i].Graphs[j] == null)
+                        {
+                            Graphs[i].Graphs.RemoveAt(j);
+                            j--;
+                        }
+                    }
+                }
+                else
+                {
+                    Graphs.RemoveAt(i);
+                }
+            }
+
+
             return Graphs;
         }
 
@@ -98,13 +171,6 @@ namespace MultyAgentRobots.MainClasses.ControlSystem
         {
             if (!IsInitialized)
             {
-                /*Graph graph = new Graph();
-                graph.LinkPoints.Add(point);
-                graph.Direction = direction;
-                IsInitialized = true;
-
-                Graphs.Add(graph);
-                NewGraph.Add(graph);*/
                 firstGraph.Condition = GraphCondition.inInProcess;
                 Graphs.Add(firstGraph);
                 WorkingGraph.Add(firstGraph);
@@ -257,73 +323,64 @@ namespace MultyAgentRobots.MainClasses.ControlSystem
             }
             if(i != -1)
             {
-                WorkingGraph.RemoveAt(i);
+
+                WorkingGraph.Remove(completeGraph);
+                completeGraph.Condition = GraphCondition.isCompleted;
             }
 
         }
 
         public void CancelGo(Graph researchGraph)
         {
-            Graph r = null;
-            for(int i = 0; i < WorkingGraph.Count; i++)
+            WorkingGraph.Remove(researchGraph);
+           // Graphs.Remove(researchGraph);
+        }
+
+        public void AbortGraph(Graph curGraph)
+        {
+            WorkingGraph.Remove(curGraph);
+            NewGraph.Add(curGraph);
+        }
+
+        public void AddToGraph(Graph graph)
+        {
+            foreach(Graph g in Graphs)
             {
-                if(RobotController.MatchTwoPoints(researchGraph.LinkPoints[0], WorkingGraph[i].LinkPoints[0]) && researchGraph.Direction == WorkingGraph[i].Direction)
+                if(g.LinkPoints.Count == 2)
                 {
-                    r = WorkingGraph[i];
-                    WorkingGraph.RemoveAt(i);
+                    if(RobotController.MatchTwoPoints(g.LinkPoints[1], graph.LinkPoints[1])
+                        && !RobotController.MatchTwoPoints(g.LinkPoints[0], graph.LinkPoints[0]))
+                    {
+                        graph.Graphs.Add(g);
+                        g.Graphs.Add(graph);
+                        return;
+                    }
                 }
             }
-
-            NewGraph.Add(r);
         }
 
         public void SetNewGraphs(List<Graph> graphs, Graph currentGraph)
         {
-            /*foreach(Graph g in graphs)
+            // foreach(Point2D point in Points)
+            foreach (Graph point in Graphs)
             {
-                foreach(Point2D gr in Points)
+               /* if(point.LinkPoints.Count > 1 && 
+                    (point.LinkPoints[0].X == currentGraph.LinkPoints[1].X &&
+                    point.LinkPoints[0].Y == currentGraph.LinkPoints[1].Y) ||
+                    (point.LinkPoints[1].X == currentGraph.LinkPoints[0].X &&
+                    point.LinkPoints[1].Y == currentGraph.LinkPoints[0].Y))*/
                 {
-                    if(g.LinkPoints[0].X == gr.X && g.LinkPoints[0].Y == gr.Y)
-                    {
-
-
-                        return;
-                    }
-                    //if(g.LinkPoints[0].X == gr.LinkPoints)
-                }
-            }*/
-
-           /* foreach(Graph g in Graphs)
-            {
-                if(g.LinkPoints.Count == 2)
-                {
-                    if (g.LinkPoints[0].X != currentGraph.LinkPoints[0].X &&
-                            g.LinkPoints[0].Y != currentGraph.LinkPoints[0].Y) {
-                        if (g.LinkPoints[1].X == graphs[0].LinkPoints[0].X &&
-                            g.LinkPoints[1].Y == graphs[0].LinkPoints[0].Y)
-                        {
-                            currentGraph.Graphs = null;
-                            g.Graphs.Add(currentGraph);
-
-                            return;
-                        }
-                    }
-                }
-            }*/
-
-            foreach(Point2D point in Points)
-            {
-                if(point.X == currentGraph.LinkPoints[1].X &&
-                    point.Y == currentGraph.LinkPoints[1].Y)
-                {
-                    currentGraph.Graphs = null;
+                    
 
                     foreach(Graph g in Graphs)
                     {
                         if (g.Graphs != null && g.Graphs.Count > 1 && g.LinkPoints.Count > 1 &&
-                            g.LinkPoints[1].X == graphs[0].LinkPoints[0].X &&
-                            g.LinkPoints[1].Y == graphs[0].LinkPoints[0].Y)
+                            (g.LinkPoints[1].X == graphs[0].LinkPoints[0].X &&
+                            g.LinkPoints[1].Y == graphs[0].LinkPoints[0].Y ||
+                            g.LinkPoints[0].X == currentGraph.LinkPoints[1].X &&
+                            g.LinkPoints[0].Y == currentGraph.LinkPoints[1].Y))
                         {
+                            
                             int reverseDir = 0;
                             switch(currentGraph.Direction)
                             {
@@ -357,9 +414,18 @@ namespace MultyAgentRobots.MainClasses.ControlSystem
                                 if(g.Graphs[i].Direction == reverseDir)
                                 {
                                     //NewGraph.Remove(g.Graphs[i]);
-                                    for(int j = 0; j < NewGraph.Count; j++)
+                                    NewGraph.Remove(g.Graphs[i]);
+                                    WorkingGraph.Remove(g.Graphs[i]);
+                                    g.Graphs[i].Condition = GraphCondition.isCompleted;
+                                    Graphs.Remove(g.Graphs[i]);
+                                    g.Graphs[i] = currentGraph;
+                                    currentGraph.Graphs.Clear();
+                                    //currentGraph.Graphs.Add(g.Graphs[i]);
+                                    return;
+                                    for (int j = 0; j < NewGraph.Count; j++)
                                     {
-                                        if(NewGraph[j].Direction == reverseDir &&
+                                        
+                                        /*if (NewGraph[j].Direction == reverseDir &&
                                             NewGraph[j].LinkPoints[0].X == g.Graphs[i].LinkPoints[0].X &&
                                             NewGraph[j].LinkPoints[0].Y == g.Graphs[i].LinkPoints[0].Y)
                                         {
@@ -367,7 +433,7 @@ namespace MultyAgentRobots.MainClasses.ControlSystem
                                             g.Graphs[i] = currentGraph;
 
                                             return;
-                                        }
+                                        }*/
                                     }
                                     g.Graphs[i].Condition = currentGraph.Condition;
                                     g.Graphs[i].Direction = currentGraph.Direction;
@@ -402,6 +468,20 @@ namespace MultyAgentRobots.MainClasses.ControlSystem
 
             NewGraph.AddRange(graphs);
             Graphs.AddRange(graphs);
+        }
+
+        public Graph GetNearestGraph(Point2D    p)
+        {
+            foreach(Graph g in Graphs)
+            {
+                if( g.LinkPoints.Count > 1 &&
+                    RobotController.MatchTwoPoints(p, g.LinkPoints[0]))
+                {
+                    return g;
+                }
+            }
+
+            return null;
         }
 
         public bool IsResearchComplete()

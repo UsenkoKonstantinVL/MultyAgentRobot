@@ -93,6 +93,7 @@ namespace MultyAgentRobots.MainClasses
                         if (currentGraph.Condition != GraphCondition.isCompleted)
                         {
                             FunctionGoToPoint();
+                            TimeCount++;
                         }
                         else
                         {
@@ -101,7 +102,7 @@ namespace MultyAgentRobots.MainClasses
                             massOfPoints = null;
                             currentGraph = null;
                         }
-                        TimeCount++;
+                        
                         break;
                     }
                 case Condition.Research:
@@ -294,14 +295,17 @@ namespace MultyAgentRobots.MainClasses
                         {
                             massOfPoints = null;
                             condition = Condition.Waiting;
+                            manager.AbortGraph(currentGraph);
+                            return;
+                            
                         }
                     }
 
-                    if(IsAnyRobotFoth(massOfPoints[masIndex], Condition.Waiting) != null)
+                    if(IsAnyRobotFoth(massOfPoints[masIndex]) != null)
                     {
                         massOfPoints = null;
                         condition = Condition.Waiting;
-                        manager.CancelGo(currentGraph);
+                        manager.AbortGraph(currentGraph);
                         return;
                     }
                     //Движение к следующей точке
@@ -338,21 +342,43 @@ namespace MultyAgentRobots.MainClasses
 
         private void FunctionResearch()
         {
+            var r = IsRobotFoth();
+            if (r != null)
+            {
+                if(r.condition == Condition.Waiting)
+                {
+                    Point2D p = new Point2D();
+                    p = r.robotInformation.GetPoint();
+                    currentGraph.LinkPoints.Add(p);
+                    var g = manager.GetNearestGraph(p);
+                    if (g != null)
+                    {
+                        g.Graphs.Add(currentGraph);
+                        manager.GraphComplete(currentGraph);
+                        condition = Condition.Waiting;
+
+                        return;
+                    }
+                }
+                currentGraph.LinkPoints.Add(r.currentGraph.LinkPoints[0]);
+                r.condition = Condition.Waiting;
+                manager.CancelGo(r.currentGraph);
+                manager.GraphComplete(currentGraph);
+                r.currentGraph.SetGraph(currentGraph);
+                //manager.GraphComplete(r.currentGraph);
+                //r.currentGraph = null;
+                //manager.AddToGraph(currentGraph);
+                condition = Condition.Waiting;
+                return;
+            }
+
             if (!IsCrossRoadOrDeadEnd(currentGraph.Direction))
             {
                 move(currentGraph.Direction);
             }
             else
             {
-                var r = IsRobotFoth();
-                if (r != null)
-                {
-                    currentGraph.LinkPoints.Add(r.currentGraph.LinkPoints[0]);
-                    r.condition = Condition.Waiting;
-                    manager.GraphComplete(currentGraph);
-                    manager.GraphComplete(r.currentGraph);
-                    condition = Condition.Waiting;
-                }
+                
                 Point2D p = new Point2D();
                 p.X = robotInformation.X;
                 p.Y = robotInformation.Y;
@@ -383,7 +409,7 @@ namespace MultyAgentRobots.MainClasses
             {
                 if (MatchTwoPoints(obstRobPos, robot.robotInformation.GetPoint()))
                 {
-                    if (robot.condition == Condition.Research)
+                    //if (robot.condition == Condition.Research)
                         res = robot;
                 }
             }
@@ -425,7 +451,7 @@ namespace MultyAgentRobots.MainClasses
             {
                 if(MatchTwoPoints(obstRobPos, robot.robotInformation.GetPoint()))
                 {
-                    if(robot.condition == Condition.Research)
+                    if(robot.condition == Condition.Research || robot.condition == Condition.Waiting)
                         res = robot;
                 }
             }
@@ -463,6 +489,8 @@ namespace MultyAgentRobots.MainClasses
             }
             if(sensorData[c[0]] == MapManager.POSITION_OCUPED ||
                 sensorData[c[1]] == MapManager.POSITION_FREE ||
+                sensorData[c[1]] == MapManager.POSITION_OTHERCAR ||
+                sensorData[c[3]] == MapManager.POSITION_OTHERCAR ||
                 sensorData[c[3]] == MapManager.POSITION_FREE)
                 return true;
             else
@@ -519,22 +547,23 @@ namespace MultyAgentRobots.MainClasses
 
             if (dir == 0)
             {
-                if(sensorData[0] == MapManager.POSITION_FREE)
+               // if(sensorData[0] == MapManager.POSITION_FREE /*|| sensorData[0] == MapManager.POSITION_OTHERCAR*/)
+                if (sensorData[0] != MapManager.POSITION_OCUPED )
                 {
 
-                    Graph graph = new Graph();
-                    /*Point2D point = new Point2D();
-                    point.X = robotInformation.X;
-                    point.Y = robotInformation.Y - 1;
-                    graph.LinkPoints.Add(point);*/
-                    graph.Direction = 0;
+                Graph graph = new Graph();
+                /*Point2D point = new Point2D();
+                point.X = robotInformation.X;
+                point.Y = robotInformation.Y - 1;
+                graph.LinkPoints.Add(point);*/
+                graph.Direction = 0;
 
-                    newGraphs.Add(graph);
+                newGraphs.Add(graph);
 
-                    currentGraph.Graphs.Add(graph);
+                currentGraph.Graphs.Add(graph);
                 }
 
-                if (sensorData[1] == MapManager.POSITION_FREE)
+                if (sensorData[1] != MapManager.POSITION_OCUPED)
                 {
                     Graph graph = new Graph();
                     /*Point2D point = new Point2D();
@@ -559,7 +588,7 @@ namespace MultyAgentRobots.MainClasses
                     newGraphs.Add(graph);
                 }*/
 
-                if (sensorData[3] == MapManager.POSITION_FREE)
+                if (sensorData[3] != MapManager.POSITION_OCUPED)
                 {
                     Graph graph = new Graph();
                     /*Point2D point = new Point2D();
@@ -575,7 +604,7 @@ namespace MultyAgentRobots.MainClasses
 
             else if (dir == 1)
             {
-                if (sensorData[0] == MapManager.POSITION_FREE)
+                if (sensorData[0] != MapManager.POSITION_OCUPED)
                 {
                     Graph graph = new Graph();
                     /*Point2D point = new Point2D();
@@ -588,7 +617,7 @@ namespace MultyAgentRobots.MainClasses
                     currentGraph.Graphs.Add(graph);
                 }
 
-                if (sensorData[1] == MapManager.POSITION_FREE)
+                if (sensorData[1] != MapManager.POSITION_OCUPED)
                 {
                     Graph graph = new Graph();
                     /*Point2D point = new Point2D();
@@ -601,7 +630,7 @@ namespace MultyAgentRobots.MainClasses
                     currentGraph.Graphs.Add(graph);
                 }
 
-                if (sensorData[2] == MapManager.POSITION_FREE)
+                if (sensorData[2] != MapManager.POSITION_OCUPED)
                 {
                     Graph graph = new Graph();
                     /*Point2D point = new Point2D();
@@ -641,7 +670,7 @@ namespace MultyAgentRobots.MainClasses
                     newGraphs.Add(graph);
                 }*/
 
-                if (sensorData[1] == MapManager.POSITION_FREE)
+                if (sensorData[1] != MapManager.POSITION_OCUPED)
                 {
                     Graph graph = new Graph();
                     /*Point2D point = new Point2D();
@@ -654,7 +683,7 @@ namespace MultyAgentRobots.MainClasses
                     currentGraph.Graphs.Add(graph);
                 }
 
-                if (sensorData[2] == MapManager.POSITION_FREE)
+                if (sensorData[2] != MapManager.POSITION_OCUPED)
                 {
                     Graph graph = new Graph();
                     /*Point2D point = new Point2D();
@@ -667,7 +696,7 @@ namespace MultyAgentRobots.MainClasses
                     currentGraph.Graphs.Add(graph);
                 }
 
-                if (sensorData[3] == MapManager.POSITION_FREE)
+                if (sensorData[3] != MapManager.POSITION_OCUPED)
                 {
                     Graph graph = new Graph();
                     /*Point2D point = new Point2D();
@@ -683,7 +712,7 @@ namespace MultyAgentRobots.MainClasses
 
             else if (dir == 3)
             {
-                if (sensorData[0] == MapManager.POSITION_FREE)
+                if (sensorData[0] != MapManager.POSITION_OCUPED)
                 {
                     Graph graph = new Graph();
                     /*Point2D point = new Point2D();
@@ -708,7 +737,7 @@ namespace MultyAgentRobots.MainClasses
                     newGraphs.Add(graph);
                 }*/
 
-                if (sensorData[2] == MapManager.POSITION_FREE)
+                if (sensorData[2] != MapManager.POSITION_OCUPED)
                 {
                     Graph graph = new Graph();
                     /*Point2D point = new Point2D();
@@ -721,7 +750,7 @@ namespace MultyAgentRobots.MainClasses
                     currentGraph.Graphs.Add(graph);
                 }
 
-                if (sensorData[3] == MapManager.POSITION_FREE)
+                if (sensorData[3] != MapManager.POSITION_OCUPED)
                 {
                     Graph graph = new Graph();
                     /*Point2D point = new Point2D();
@@ -803,7 +832,8 @@ namespace MultyAgentRobots.MainClasses
                             {
                                 if (((curRobot.Y - 1) == r.Y) && ((curRobot.X) == r.X))
                                 {
-                                    res[0] = MapManager.POSITION_OCUPED;
+                                //Переименовать в POSITION_OCUPED;
+                                    res[0] = MapManager.POSITION_OTHERCAR;
                                 }
                             }
 
@@ -811,7 +841,7 @@ namespace MultyAgentRobots.MainClasses
                             {
                                 if (((curRobot.Y) == r.Y) && ((curRobot.X + 1) == r.X))
                                 {
-                                    res[1] = MapManager.POSITION_OCUPED;
+                                    res[1] = MapManager.POSITION_OTHERCAR;
                                 }
                             }
 
@@ -819,7 +849,7 @@ namespace MultyAgentRobots.MainClasses
                             {
                                 if (((curRobot.Y + 1) == r.Y) && ((curRobot.X) == r.X))
                                 {
-                                    res[2] = MapManager.POSITION_OCUPED;
+                                    res[2] = MapManager.POSITION_OTHERCAR;
                                 }
                             }
 
@@ -827,7 +857,7 @@ namespace MultyAgentRobots.MainClasses
                             {
                                 if (((curRobot.Y) == r.Y) && ((curRobot.X - 1) == r.X))
                                 {
-                                    res[3] = MapManager.POSITION_OCUPED;
+                                    res[3] = MapManager.POSITION_OTHERCAR;
                                 }
                             }
                         }

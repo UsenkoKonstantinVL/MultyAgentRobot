@@ -70,12 +70,17 @@ namespace MultyAgentRobots
 
         private void button2_Click(object sender, EventArgs e)
         {
-            if(fg == null)
+            if(fg == null || fg.IsDisposed == true)
             {
                 fg = new FormGraph();
                 fg.Show();
                 //fg.Close();
             }
+            /*if(fg.IsDisposed == true)
+            {
+                fg = new FormGraph();
+                fg.Show();
+            }*/
             //fg = new FormGraph();
             //fg.Show();
             fg.PrintGraph(manager.GetGraphNode());
