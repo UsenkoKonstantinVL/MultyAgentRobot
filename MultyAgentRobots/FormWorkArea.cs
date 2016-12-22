@@ -57,7 +57,7 @@ namespace MultyAgentRobots
 
                 GraphForm f = new GraphForm();
                 ReturnData data = manager.GetReturnData();
-                f.DrawGraph(data.TotalTick, data.ListTicks);
+                f.DrawGraph(data.TotalTick, data.ListTicks, data.Count);
                 f.ShowDialog();
                
             }

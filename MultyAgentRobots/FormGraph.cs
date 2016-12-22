@@ -99,9 +99,18 @@ namespace MultyAgentRobots
 
                             }
 
+                            //SubGraphName += gr.RobotName;
+
                             SubGraphName += SubGraph.Condition.ToString();
 
                             graph.AddEdge(GraphName, SubGraphName);
+                            var node = graph.FindNode(GraphName);
+                            var color = node.Attr.Color;
+                            color.A = gr.robot.robotInformation.RobotColor.A;
+                            color.B = gr.robot.robotInformation.RobotColor.B;
+                            color.G = gr.robot.robotInformation.RobotColor.G;
+                            color.R = gr.robot.robotInformation.RobotColor.R;
+                            node.Attr.Color = color;
                         }
                     }
                     

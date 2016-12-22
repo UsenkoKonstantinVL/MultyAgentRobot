@@ -24,6 +24,7 @@ namespace MultyAgentRobots.MainClasses
         public Condition condition = Condition.Waiting;
         public GraphManager manager;
         public double TimeCount { get; set; }
+        public int CountCompleteWork = 0;
 
         public RobotController()
         {
@@ -97,6 +98,7 @@ namespace MultyAgentRobots.MainClasses
                         }
                         else
                         {
+                            currentGraph.robot = this;
                             manager.GraphComplete(currentGraph);
                             condition = Condition.Waiting;
                             massOfPoints = null;
@@ -354,6 +356,7 @@ namespace MultyAgentRobots.MainClasses
                     if (g != null)
                     {
                         g.Graphs.Add(currentGraph);
+                        currentGraph.robot = this;
                         manager.GraphComplete(currentGraph);
                         condition = Condition.Waiting;
 
@@ -363,6 +366,7 @@ namespace MultyAgentRobots.MainClasses
                 currentGraph.LinkPoints.Add(r.currentGraph.LinkPoints[0]);
                 r.condition = Condition.Waiting;
                 manager.CancelGo(r.currentGraph);
+                currentGraph.robot = this;
                 manager.GraphComplete(currentGraph);
                 r.currentGraph.SetGraph(currentGraph);
                 //manager.GraphComplete(r.currentGraph);
@@ -385,6 +389,7 @@ namespace MultyAgentRobots.MainClasses
                 currentGraph.LinkPoints[0].LinkPoints.Add(p);
                 currentGraph.LinkPoints.Add(p);
                 currentGraph.Condition = GraphCondition.isCompleted;
+                currentGraph.robot = this;
                 manager.GraphComplete(currentGraph);
                 if(!IsDeadEnd(currentGraph.Direction))
                 {

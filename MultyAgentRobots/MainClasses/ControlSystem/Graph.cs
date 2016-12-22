@@ -19,6 +19,7 @@ namespace MultyAgentRobots.MainClasses.ControlSystem
 
         public int Direction;
         public  String RobotName;
+        public RobotController robot;
 
         public Graph()
         {
@@ -323,7 +324,7 @@ namespace MultyAgentRobots.MainClasses.ControlSystem
             }
             if(i != -1)
             {
-
+                completeGraph.robot.CountCompleteWork++;
                 WorkingGraph.Remove(completeGraph);
                 completeGraph.Condition = GraphCondition.isCompleted;
             }

@@ -32,10 +32,10 @@ namespace MultyAgentRobots
             panel4.Controls.Add(zedGraph2);
         }
 
-        public void DrawGraph(double TotalTime, List<double> ListTime)
+        public void DrawGraph(double TotalTime, List<double> ListTime, List<int> Count)
         {
             DrawGraph1(ListTime);
-            DrawGraph2(TotalTime, ListTime);
+            DrawGraph3(Count);
 
             label1.Text = "Общее кол-во тиков: " + TotalTime.ToString();
         }
@@ -48,7 +48,7 @@ namespace MultyAgentRobots
             pane.CurveList.Clear();
 
             pane.Title.Text = "Время работы роботов";
-            pane.XAxis.Title.Text = "Работ";
+            pane.XAxis.Title.Text = "Рoбот";
             pane.YAxis.Title.Text = "Время(тик)";
 
             int itemscount = 5;
@@ -101,6 +101,46 @@ namespace MultyAgentRobots
             }
 
             BarItem bar1 = pane.AddBar("RobotsTimeInPercent", xList, list, Color.Blue);
+
+            // !!! Расстояния между столбиками в кластере (группами столбиков)
+            pane.BarSettings.MinBarGap = 0.0f;
+
+            // !!! Увеличим расстояние между кластерами в 2.5 раза
+            pane.BarSettings.MinClusterGap = 2.5f;
+
+
+            // Вызываем метод AxisChange (), чтобы обновить данные об осях. 
+            zedGraph2.AxisChange();
+
+            // Обновляем график
+            zedGraph2.Invalidate();
+        }
+
+
+        private void DrawGraph3(List<int> listCountCompleteWork)
+        {
+            GraphPane pane = zedGraph2.GraphPane;
+
+            // Очистим список кривых на тот случай, если до этого сигналы уже были нарисованы
+            pane.CurveList.Clear();
+
+            pane.Title.Text = "Количество обследованных областей";
+            pane.XAxis.Title.Text = "Робот";
+            pane.YAxis.Title.Text = "Кол-во обследованных областей";
+
+            int itemscount = 5;
+
+            double[] list = new double[listCountCompleteWork.Count];
+            double[] xList = new double[listCountCompleteWork.Count];
+
+            for (int i = 0; i < listCountCompleteWork.Count; i++)
+            {
+                xList[i] = i + 1;
+                // list[i] = listCountCompleteWork[i] / TotalTime;
+                list[i] = listCountCompleteWork[i];
+            }
+
+            BarItem bar1 = pane.AddBar("RobotsCompletedWork", xList, list, Color.Blue);
 
             // !!! Расстояния между столбиками в кластере (группами столбиков)
             pane.BarSettings.MinBarGap = 0.0f;
